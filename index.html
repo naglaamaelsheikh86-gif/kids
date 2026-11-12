@@ -1,0 +1,82 @@
+gameState.score = Math.max(0, gameState.score - penalty);
+
+        feedbackBox.className = "rounded-2xl p-4 text-right space-y-2 border-2 bg-amber-50 border-amber-400 text-amber-950";
+        feedbackTitle.textContent = 💡 محاولة قريبة! خسرت ${penalty} نقاط، وتعلّمت القاعدة:;
+      }
+
+      feedbackExplanation.textContent = question.explanation;
+      feedbackBox.classList.remove("hidden");
+      updateHUDAndProgress();
+    }
+
+    // إغلاق نافذة السؤال والتحقق هل وصل الطفل لصندوق الكنز
+    function closeQuestionModal() {
+      document.getElementById("questionModal").classList.add("hidden");
+      gameState.modalOpen = false;
+
+      if (gameState.score >= gameState.targetScore) {
+        triggerVictory();
+      }
+    }
+
+    function closeTrapModal() {
+      document.getElementById("trapModal").classList.add("hidden");
+      gameState.modalOpen = false;
+    }
+
+    // تحديث شريط النقاط وتحريك شخصية البطل على مسار الحديقة نحو الكنز
+    function updateHUDAndProgress() {
+      document.getElementById("hudScore").textContent = gameState.score;
+      document.getElementById("hudStars").textContent = gameState.stars;
+
+      const ratio = Math.min(1, gameState.score / gameState.targetScore);
+      // التحرك من اليمين (2%) إلى اليسار (82%) حيث يوجد صندوق الكنز الكبير
+      const rightPos = 2 + ratio * 80;
+      document.getElementById("heroRunner").style.right = rightPos + "%";
+
+      const remaining = Math.max(0, gameState.targetScore - gameState.score);
+      const hintEl = document.getElementById("progressHintText");
+      if (remaining > 0) {
+        hintEl.textContent = بقي لك ${remaining} نقطة فقط لتصل إلى الكنز!;
+      } else {
+        hintEl.textContent = لقد وصلت إلى صندوق الكنز الكبير!;
+      }
+    }
+
+    // الاحتفال بالوصول إلى صندوق الكنز الكبير
+    function triggerVictory() {
+      gameState.isPlaying = false;
+      playSound("win");
+      launchConfetti();
+
+      document.getElementById("certHeroName").textContent = gameState.heroName;
+      document.getElementById("certFinalScore").textContent = ${gameState.score} نقطة;
+      document.getElementById("certFinalStars").textContent = ${gameState.stars} ⭐;
+      document.getElementById("victoryScreen").classList.remove("hidden");
+    }
+
+    // إطلاق القصاصات الملونة الاحتفالية
+    function launchConfetti() {
+      const colors = ["#ef4444", "#f59e0b", "#10b981", "#3b82f6", "#a855f7", "#ec4899"];
+      for (let i = 0; i < 65; i++) {
+        const piece = document.createElement("div");
+        piece.className = "confetti-piece";
+        piece.style.left = Math.random() * 100 + "vw";
+        piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.borderRadius = Math.random() > 0.5 ? "50%" : "3px";
+        piece.style.animationDuration = (2.2 + Math.random() * 2.5) + "s";
+        piece.style.animationDelay = (Math.random() * 0.8) + "s";
+        document.body.appendChild(piece);
+        setTimeout(() => piece.remove(), 5000);
+      }
+    }
+
+    // إعادة اللعب
+    function resetAndPlayAgain() {
+      document.getElementById("victoryScreen").classList.add("hidden");
+      startGame();
+    }
+  </script>
+</body>
+</html>
+`
